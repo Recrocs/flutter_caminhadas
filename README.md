@@ -31,3 +31,4 @@ Aplicativo desenvolvido em Flutter com integração de mapas para caminhadas com
 - Calorias perdidas
 - Tempo demorado para percorrer
 
+# flutter_caminhadas
