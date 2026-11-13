@@ -71,3 +71,4 @@ Os testes do componente personalizado foram realizados com sucesso.
 A atividade permitiu aplicar os conceitos de criação e reutilização de widgets no Flutter, utilizando parâmetros para transmitir informações entre componentes.
 
 Também foi possível explorar a integração entre Flutter e Android por meio do pacote `home_widget`, ampliando as funcionalidades do aplicativo Caminhadas.# flutter_caminhadas_Widgets
+# flutter_caminhadas_Widgets
