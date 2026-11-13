@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../models/caminhada.dart';
 import '../services/storage_service.dart';
+import '../services/widget_service.dart';
 import '../widgets/card_caminhada.dart';
 import '../widgets/menu_lateral.dart';
+import '../widgets/meu_info_widget.dart';
 import 'detalhes.dart';
 import 'nova_caminhada.dart';
 
@@ -26,6 +28,20 @@ class _HomeState extends State<Home> {
 
   bool carregando = true;
 
+  double get distanciaTotal {
+  return caminhadas.fold(
+    0,
+    (total, caminhada) => total + caminhada.distancia,
+  );
+}
+
+double get caloriasTotal {
+  return caminhadas.fold(
+    0,
+    (total, caminhada) => total + caminhada.calorias,
+  );
+}
+
   @override
   void initState() {
     super.initState();
@@ -42,6 +58,12 @@ class _HomeState extends State<Home> {
       caminhadas = lista;
       carregando = false;
     });
+
+    try {
+      await WidgetService.atualizarWidget(lista);
+    } catch (e) {
+      debugPrint('Erro ao atualizar widget: $e');
+    }
   }
 
   Future<void> abrirNovaCaminhada() async {
@@ -86,27 +108,31 @@ class _HomeState extends State<Home> {
         ),
       ),
 
-      body: carregando
-          ? const Center(child: CircularProgressIndicator())
-          : caminhadas.isEmpty
-          ? _telaVazia()
-          : ListView.builder(
-              padding: const EdgeInsets.only(top: 10, bottom: 90),
+      
+body: carregando
+    ? const Center(child: CircularProgressIndicator())
+    : ListView(
+        padding: const EdgeInsets.only(top: 10, bottom: 90),
+        children: [
+          MeuInfoWidget(
+            distancia: distanciaTotal,
+            quantidade: caminhadas.length,
+            calorias: caloriasTotal,
+          ),
 
-              itemCount: caminhadas.length,
-
-              itemBuilder: (context, index) {
-                final caminhada = caminhadas[index];
-
-                return InkWell(
-                  onTap: () {
-                    abrirDetalhes(caminhada);
-                  },
-
-                  child: CardCaminhada(caminhada: caminhada),
-                );
-              },
-            ),
+          if (caminhadas.isEmpty)
+            _telaVazia()
+          else
+            ...caminhadas.map((caminhada) {
+              return InkWell(
+                onTap: () {
+                  abrirDetalhes(caminhada);
+                },
+                child: CardCaminhada(caminhada: caminhada),
+              );
+            }),
+        ],
+      ),
 
       floatingActionButton: FloatingActionButton(
         onPressed: abrirNovaCaminhada,
